@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nexus
+  namespace: devops-tools
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nexus-server
+        worktype: cpu
+    spec:
+      containers:
+        - name: nexus
+          image: sonatype/nexus3:3.13.0
+          resources:
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8081
+            - containerPort: 5000
+            - containerPort: 6000
+          volumeMounts:
+            - name: nexus-data
+              mountPath: /nexus-data
+      nodeSelector:
+        worktype: cpu
+      volumes:
+        - name: nexus-data
+          hostPath:
+            path: /DATA/nexus-data
+            type: Directory
